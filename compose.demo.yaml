@@ -1,0 +1,13 @@
+# Local development container: no production users or TLS required.
+services:
+  demo:
+    image: node:24-bookworm-slim
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - demo-modules:/workspace/node_modules
+    ports:
+      - '127.0.0.1:5173:5173'
+    command: sh -c 'npm ci && npm run build && (node dist/server/index.js --demo & npx vite --host 0.0.0.0)'
+volumes:
+  demo-modules:

@@ -1,0 +1,158 @@
+$ git init -b main
+Initialized empty Git repository in /private/var/folders/xc/p5j97_jj2j381hx874ckf8q00000gn/T/parceldesk-ts-feature-CaGe8m/.git/
+
+$ git config user.name ParcelDesk workflow example
+
+$ git config user.email workflow@example.invalid
+
+$ git add .
+
+$ git commit -m Baseline TypeScript routing and regression tests
+[main (root-commit) b2cceae] Baseline TypeScript routing and regression tests
+ 6 files changed, 609 insertions(+)
+ create mode 100644 .gitignore
+ create mode 120000 node_modules
+ create mode 100644 package.json
+ create mode 100644 server/domain.ts
+ create mode 100644 shared/types.ts
+ create mode 100644 tests/domain.test.ts
+
+$ git switch -c feature/bulky-department
+
+$ /Users/abhaykumar/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --import tsx --test tests/domain.test.ts tests/bulky-feature.test.ts
+✔ Bulky boundary 10 (1.138833ms)
+✔ Bulky boundary 10.001 (0.197541ms)
+✔ Bulky boundary 30 (0.132708ms)
+✔ Bulky boundary 30.001 (0.111125ms)
+✔ inclusive weight boundary 0.001 → Mail (1.176083ms)
+✔ inclusive weight boundary 0.999 → Mail (0.119916ms)
+✔ inclusive weight boundary 1 → Mail (0.080542ms)
+✔ inclusive weight boundary 1.001 → Regular (0.070208ms)
+✔ inclusive weight boundary 9.999 → Regular (0.08325ms)
+✔ inclusive weight boundary 10 → Regular (0.061166ms)
+✔ inclusive weight boundary 10.001 → Heavy (0.058875ms)
+✔ inclusive weight boundary 100000 → Heavy (0.061166ms)
+✔ insurance boundary 999.99 (0.096084ms)
+✔ insurance boundary 1000 (0.092833ms)
+✔ insurance boundary 1000.01 (0.061958ms)
+✔ reject weight: 0 (0.201584ms)
+✔ reject weight: -1 (0.050917ms)
+✔ reject weight: true (0.037584ms)
+✔ reject weight: NaN (0.02975ms)
+✔ reject weight: Infinity (0.03325ms)
+✔ reject weight: 0.0001 (0.032375ms)
+✔ reject weight: 0x10 (0.028958ms)
+✔ reject value: -1 (0.036ms)
+✔ reject value: 1.001 (0.0345ms)
+✔ reject value: false (0.033ms)
+✔ reject country: ZZ (0.035375ms)
+✔ reject country: Netherlands (0.031625ms)
+✔ reject invalid schema null (0.04125ms)
+✔ reject invalid schema [] (0.029417ms)
+✔ reject invalid schema {} (0.029667ms)
+✔ reject invalid schema "hello" (0.027167ms)
+✔ reject invalid schema {"weight":"1","value":"1000","country":"NL","approved":true} (0.027834ms)
+✔ reject invalid schema {"weight":"1","value":"1000","country":"NL","attributes":{"nested":{}}} (0.071584ms)
+✔ country is normalized and precision is exact (0.042167ms)
+✔ reject unsafe policy: descending (0.183083ms)
+✔ reject unsafe policy: duplicate (0.048791ms)
+✔ reject unsafe policy: catchall (0.057084ms)
+✔ reject unsafe policy: earlyCatchall (0.039334ms)
+✔ reject unsafe policy: insurance (0.525375ms)
+✔ reject unsafe policy: ambiguous (0.091042ms)
+✔ reject unsafe policy: injection (0.039667ms)
+✔ country override cannot bypass insurance (0.090792ms)
+✔ Bulky extension preserves every boundary and insurance (0.171708ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 43
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 124.501667
+
+$ git add .
+
+$ git commit -m Add Bulky fixture and insurance boundary tests
+[feature/bulky-department 145d92b] Add Bulky fixture and insurance boundary tests
+ 2 files changed, 27 insertions(+)
+ create mode 100644 examples/bulky-policy.json
+ create mode 100644 tests/bulky-feature.test.ts
+
+$ git diff main...HEAD --stat
+ examples/bulky-policy.json  | 22 ++++++++++++++++++++++
+ tests/bulky-feature.test.ts |  5 +++++
+ 2 files changed, 27 insertions(+)
+
+$ git switch main
+
+$ git merge --no-ff feature/bulky-department -m Merge Bulky configuration example
+Merge made by the 'ort' strategy.
+ examples/bulky-policy.json  | 22 ++++++++++++++++++++++
+ tests/bulky-feature.test.ts |  5 +++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 examples/bulky-policy.json
+ create mode 100644 tests/bulky-feature.test.ts
+
+$ /Users/abhaykumar/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --import tsx --test tests/domain.test.ts tests/bulky-feature.test.ts
+✔ Bulky boundary 10 (1.224042ms)
+✔ Bulky boundary 10.001 (0.249458ms)
+✔ Bulky boundary 30 (0.198916ms)
+✔ Bulky boundary 30.001 (0.138875ms)
+✔ inclusive weight boundary 0.001 → Mail (1.148458ms)
+✔ inclusive weight boundary 0.999 → Mail (0.106083ms)
+✔ inclusive weight boundary 1 → Mail (0.492542ms)
+✔ inclusive weight boundary 1.001 → Regular (0.086833ms)
+✔ inclusive weight boundary 9.999 → Regular (0.091ms)
+✔ inclusive weight boundary 10 → Regular (0.065625ms)
+✔ inclusive weight boundary 10.001 → Heavy (0.070542ms)
+✔ inclusive weight boundary 100000 → Heavy (0.06275ms)
+✔ insurance boundary 999.99 (0.095792ms)
+✔ insurance boundary 1000 (0.114583ms)
+✔ insurance boundary 1000.01 (0.069417ms)
+✔ reject weight: 0 (0.192833ms)
+✔ reject weight: -1 (0.04ms)
+✔ reject weight: true (0.036708ms)
+✔ reject weight: NaN (0.028958ms)
+✔ reject weight: Infinity (0.034708ms)
+✔ reject weight: 0.0001 (0.033833ms)
+✔ reject weight: 0x10 (0.032167ms)
+✔ reject value: -1 (0.048791ms)
+✔ reject value: 1.001 (0.044375ms)
+✔ reject value: false (0.037666ms)
+✔ reject country: ZZ (0.039042ms)
+✔ reject country: Netherlands (0.072958ms)
+✔ reject invalid schema null (0.061709ms)
+✔ reject invalid schema [] (0.039042ms)
+✔ reject invalid schema {} (0.039333ms)
+✔ reject invalid schema "hello" (0.029834ms)
+✔ reject invalid schema {"weight":"1","value":"1000","country":"NL","approved":true} (0.030792ms)
+✔ reject invalid schema {"weight":"1","value":"1000","country":"NL","attributes":{"nested":{}}} (0.081792ms)
+✔ country is normalized and precision is exact (0.052167ms)
+✔ reject unsafe policy: descending (0.206459ms)
+✔ reject unsafe policy: duplicate (0.051541ms)
+✔ reject unsafe policy: catchall (0.06575ms)
+✔ reject unsafe policy: earlyCatchall (0.04525ms)
+✔ reject unsafe policy: insurance (0.054584ms)
+✔ reject unsafe policy: ambiguous (0.085291ms)
+✔ reject unsafe policy: injection (0.050417ms)
+✔ country override cannot bypass insurance (0.098667ms)
+✔ Bulky extension preserves every boundary and insurance (0.185167ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 43
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 78.313875
+
+$ git log --graph --oneline --all
+*   24d76de Merge Bulky configuration example
+|\  
+| * 145d92b Add Bulky fixture and insurance boundary tests
+|/  
+* b2cceae Baseline TypeScript routing and regression tests
+
+$ git bundle create /Users/abhaykumar/Desktop/untitled folder/playpower/parcel-routing/docs/feature-workflow.bundle --all

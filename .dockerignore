@@ -1,0 +1,14 @@
+node_modules
+dist
+artifacts
+data
+.venv*
+.git
+.env
+__pycache__
+.pytest_cache
+
+users.json
+coverage
+playwright-report
+test-results

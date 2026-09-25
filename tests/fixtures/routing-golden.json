@@ -1,0 +1,22 @@
+[
+  {
+    "input": { "weight": "1", "value": "1000", "country": "NL" },
+    "department": "Mail",
+    "status": "routed"
+  },
+  {
+    "input": { "weight": "1.001", "value": "1000.01", "country": "IN" },
+    "department": "Regular",
+    "status": "pending_insurance"
+  },
+  {
+    "input": { "weight": "10", "value": "0", "country": "US" },
+    "department": "Regular",
+    "status": "routed"
+  },
+  {
+    "input": { "weight": "10.001", "value": "999.99", "country": "NL" },
+    "department": "Heavy",
+    "status": "routed"
+  }
+]

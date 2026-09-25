@@ -1,0 +1,9 @@
+node_modules
+artifacts
+dist
+data
+coverage
+package-lock.json
+playwright-report
+test-results
+docs/feature-workflow-transcript.txt
