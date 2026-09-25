@@ -154,3 +154,7 @@ Fragile attributes only affect decisions after activating a matching rule. Expec
 ## Department renaming
 
 Activate a rename from Mail to Whale. Overview immediately lists Whale with zero routed parcels; Mail is dimmed and marked retired with its historical count. Submit a new parcel of weight 0.5 and value 20 to NL: Whale increases by one. Past parcel decisions are preserved.
+
+## Role themes and policy studio
+
+Themes apply automatically after login: blue for operators, teal for insurers and violet for admin. Insurers can use Open insurance queue from Overview. The policy page shows live version, draft rule count and activation-test count, followed by rule cards, the test sandbox and publishing controls. Expand each Current versus proposed entry to inspect its JSON. The change reason still needs at least ten characters, and edits invalidate an earlier preview. See DEMO.md for a timed presentation and QA.md for the current verification record.

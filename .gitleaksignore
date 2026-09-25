@@ -1,0 +1,6 @@
+# Exact historical false positives: SHA-256 manifest digests, verified against committed file bytes.
+89beef539284e3d5511691d1f314fa5ff0c1e4df:MANIFEST.sha256.json:generic-api-key:17
+89beef539284e3d5511691d1f314fa5ff0c1e4df:MANIFEST.sha256.json:generic-api-key:35
+89beef539284e3d5511691d1f314fa5ff0c1e4df:MANIFEST.sha256.json:generic-api-key:74
+89beef539284e3d5511691d1f314fa5ff0c1e4df:MANIFEST.sha256.json:generic-api-key:83
+89beef539284e3d5511691d1f314fa5ff0c1e4df:MANIFEST.sha256.json:generic-api-key:95
