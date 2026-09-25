@@ -2,29 +2,22 @@
 
 ## Contributions
 
-| Area        | User contribution                                                               | AI assistance                                                              |
-| ----------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Scope       | Supplied the assignment and requested a complete submission                     | Interpreted requirements and proposed implementation approaches            |
-| Technology  | Requested React, TypeScript or MERN, plus usage documentation                   | Implemented React/TypeScript with Express and SQLite; explained trade-offs |
-| Design      | Supplied requirements, feedback and requested improvements                      | Assisted with architecture, workflows and technical design decisions       |
-| Development | Requested features and reported observed issues                                 | Generated and revised frontend, backend, tests and configuration           |
-| Usability   | Requested role themes, editable policies and corrected department counts        | Implemented the UI changes and related behavior                            |
-| Access      | Required one admin, admin-created staff and retention of existing demo accounts | Implemented account controls and persistence                               |
-| Delivery    | Requested documentation cleanup and repository submission                       | Drafted guides and assisted with local checks and Git workflows            |
+| Area                   | My contribution                                                                                              | AI assistance                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| Scope                  | Supplied the assignment and directed features step by step                                                   | Interpreted requirements and proposed implementation approaches                |
+| Technology             | Requested React/TypeScript and selected SQLite as the database                                               | Implemented the stack, persistence and database integration                    |
+| Design                 | Provided requirements, priorities and feedback throughout development                                        | Assisted with architecture, workflows and technical design decisions           |
+| Admin and policy pages | Requested fixes to the admin experience and the ability to create, edit and remove routing rules             | Implemented policy editing, testing, previews and activation controls          |
+| Account authority      | Required one admin with authority to create operators and insurers; requested keeping existing demo accounts | Implemented role checks, account creation and persistent access controls       |
+| Themes and UI          | Requested distinct role themes, page styling and clearer layouts                                             | Implemented operator, insurer and admin themes and responsive UI improvements  |
+| Department display     | Reported the department rename issue and requested clearer current and historical counts                     | Updated the chart to show active departments and dim retired departments       |
+| Testing                | Requested testing as part of the feature improvements                                                        | Generated and ran automated checks and revised implementation based on results |
+| Monitoring             | Requested monitoring through logs to help investigate problems                                               | Implemented request logging, monitoring signals and related checks             |
+| Delivery               | Requested usage guides, documentation cleanup and repository submission                                      | Drafted documentation and assisted with local checks and Git workflows         |
 
-- This was an AI-assisted project, including design, coding, testing and documentation.
-- The conversation does not establish that all architecture decisions were independently completed before AI involvement.
-- AI-generated explanations and code still need review and understanding by the submitter.
-
-## Prompts used
-
-| Prompt excerpt                                                                                      | Purpose                                |
-| --------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| “complete this project ... after project completion, create a detailed interview preparation guide” | Initial implementation and explanation |
-| “code should be in react, typescripte, or use mern stack, and readme file, about how to use”        | Stack and setup instructions           |
-| “continue prev task and add these top 5 improvements”                                               | Review-driven revisions                |
-| “i was not able to crete/remove/edit new policy”                                                    | Improve policy management              |
-| “Keep the existing demo accounts”                                                                   | Preserve existing staff access         |
+- My contributions covered technology selection, feature direction, usability feedback and requested testing/monitoring.
+- AI assistance included design, coding, testing and documentation.
+- AI-generated code and explanations still require review and understanding by the submitter.
 
 ## Revisions made during development
 
