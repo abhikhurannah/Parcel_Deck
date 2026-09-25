@@ -12,9 +12,9 @@ Final submission validation: 25 September 2026.
 - **fast-check** generated 2,000 parcel examples with shrinking enabled; separate golden-file expected outcomes and exact boundaries protect against shared implementation errors. These examples are part of one test, not 2,000 separate tests.
 - Backend coverage: **95.01% lines, 85.30% branches, 94.08% functions** in the recorded run. The command enforces minimums of 75% / 65% / 70% respectively. Scope: `server/**/*.ts`, excluding startup `server/index.ts`; this is not whole-project/browser coverage.
 - ESLint, Prettier and strict TypeScript checks passed. Vite production build and server compilation passed.
-- `npm audit` reported zero known advisories at verification time; see npm-audit.json. This is not a penetration test.
+- `npm audit` reported zero known advisories at verification time; rerun `npm audit` for current results. This is not a penetration test.
 - 5,000-row benchmark: 345,491-byte JSON file, **50.47 ms**, 4,000 routed/1,000 held. This measures parsing, routing and in-memory SQLite only; excludes HTTP, disk fsync and concurrent users.
-- The actual isolated local branch/test/merge example was regenerated from the current TypeScript source. Its transcript and Git bundle are included.
+- The actual isolated local branch/test/merge example was regenerated from the current TypeScript source. Its transcript and Git bundle can be regenerated with `npm run feature:demo`; generated evidence is not retained in the documentation folder.
 
 ## Defects caught during the work
 

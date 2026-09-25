@@ -22,3 +22,8 @@ test-results/
 *-backup-*/
 playwright.local.config.ts
 ParcelDesk-*.zip
+
+# Reproducible local documentation reports
+docs/npm-audit.json
+docs/feature-workflow.bundle
+docs/feature-workflow-transcript.txt

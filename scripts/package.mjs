@@ -50,7 +50,12 @@ async function walk(directory) {
     } else if (
       (folders.has(rel.split('/')[0]) || files.has(rel)) &&
       !/\.(py|pyc|sqlite3)$/.test(name) &&
-      name !== '.DS_Store'
+      ![
+        '.DS_Store',
+        'npm-audit.json',
+        'feature-workflow.bundle',
+        'feature-workflow-transcript.txt',
+      ].includes(name)
     ) {
       const data = await readFile(path);
       entries['parcel-routing/' + rel] = data;
