@@ -16,7 +16,10 @@ COPY --from=build /app/package*.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/examples ./examples
-RUN mkdir /data && chown node:node /data
+# The runtime executes Node directly; package managers belong only in the build stage.
+RUN rm -rf /usr/local/lib/node_modules/npm /opt/yarn-* \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg \
+    && mkdir /data && chown node:node /data
 USER node
 EXPOSE 8081
 VOLUME ["/data"]
