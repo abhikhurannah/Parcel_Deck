@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim AS build
+FROM node:25-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -9,7 +9,7 @@ COPY shared ./shared
 COPY examples ./examples
 RUN npm run build && npm prune --omit=dev
 
-FROM node:24-bookworm-slim
+FROM node:25-bookworm-slim
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=8081 DATABASE=/data/routing-ts.sqlite3
 WORKDIR /app
 COPY --from=build /app/package*.json ./
