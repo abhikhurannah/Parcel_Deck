@@ -1,47 +1,117 @@
-# TypeScript API contract
+# API reference
 
-Business endpoints require a session except login and the separately token-protected monitor. Login uses JSON plus `X-Requested-With: ParcelDesk`, returns a CSRF token and sets an HttpOnly cookie. Include `X-CSRF-Token` on authenticated mutations. Every response has `X-Request-ID`.
+## Authentication
 
-| Method | Route                                 | Purpose / authority                                                                         |
-| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------- |
-| POST   | `/api/login`                          | `{username,password}`; JSON and custom header required                                      |
-| GET    | `/api/me`                             | Session username, role and CSRF token                                                       |
-| POST   | `/api/logout`                         | Revoke current server-side session                                                          |
-| GET    | `/api/overview`                       | Totals, department distribution, active version, signals                                    |
-| GET    | `/api/parcels?page=1&status=&search=` | Paginated records, 25 per page                                                              |
-| POST   | `/api/parcels`                        | Operator/admin; parcel JSON and `Idempotency-Key`                                           |
-| POST   | `/api/import?format=xml&country=NL`   | Operator/admin; **raw file bytes**, `Content-Type: application/octet-stream`, operation key |
-| POST   | `/api/parcels/:id/approval`           | Insurer; `{decision:"approve" or "reject",reason}`                                          |
-| GET    | `/api/policy`                         | Current rules and latest 20 versions                                                        |
-| POST   | `/api/policy/preview`                 | Admin; `{policy}` → impact, normalized policy, token, base version                          |
-| POST   | `/api/policy`                         | Admin; `{policy,token,base_version,reason}`                                                 |
-| GET    | `/api/audit`                          | Admin; latest 100 audit events                                                              |
-| GET    | `/healthz`                            | Public process liveness                                                                     |
-| GET    | `/readyz`                             | Public database read readiness                                                              |
+- Business endpoints require a session, except login.
+- Login: `POST /api/login` with JSON `{ "username": "...", "password": "..." }`.
+- Include `X-Requested-With: ParcelDesk` on login.
+- Keep the returned HttpOnly session cookie and CSRF token.
+- Include `X-CSRF-Token` on authenticated mutations.
+- Responses include `X-Request-ID` for troubleshooting.
+- Monitoring uses a separate bearer token with no parcel access.
 
-The upload API accepts raw JSON/XML bytes, not multipart form data. The React client sends this format. `country` applies only as a fallback for XML parcels missing Country; JSON requires each parcel's country.
+## Session and accounts
 
-Parcel fields: required `weight`, `value`, `country`; optional `reference`, `attributes`. Runtime validators reject unknown fields, including supplied approval flags. Shared compile-time definitions are in `shared/types.ts`.
+| Method | Path                       | Access / body                           |
+| ------ | -------------------------- | --------------------------------------- |
+| GET    | `/api/me`                  | Current session                         |
+| POST   | `/api/logout`              | Signed-in user                          |
+| POST   | `/api/password`            | `{current, password}`; revokes sessions |
+| GET    | `/api/users`               | Admin                                   |
+| POST   | `/api/users`               | Admin; `{username, role, password}`     |
+| POST   | `/api/users/:name/disable` | Admin; cannot disable self              |
 
-Creation returns 201 with counts, first/last IDs and policy version. A same-key/same-content replay returns 200 and `replayed:true`. Keys are 8–100 characters, scoped to username. A new key is a new operation.
+- New staff roles: `operator` or `insurer`; no public signup or second admin.
+- Password length: 12–128 characters.
 
-Errors: 400 malformed request, 401 missing/expired session, 403 role/CSRF denial, 404 missing route/record, 409 stale state or conflicting key, 413 oversized body, 415 wrong upload content type, 422 validation, 429 throttle with `Retry-After`, 503 internal/storage failure. Import validation gives `error_count` and every `{row,message}` entry (up to the 5,000-row file limit). Atomic imports commit no rows on validation failure; explicit partial imports require preview.
+## Parcels and batches
 
-## Review edition additions
+| Method | Path                                  | Purpose / access                                       |
+| ------ | ------------------------------------- | ------------------------------------------------------ |
+| GET    | `/api/overview`                       | Counts, active/retired departments, signals and alerts |
+| GET    | `/api/parcels`                        | Paginated records; 25 per page                         |
+| POST   | `/api/parcels`                        | Operator/admin intake                                  |
+| POST   | `/api/parcels/:id/approval`           | Insurer; `{decision, reason}`                          |
+| POST   | `/api/import/preview`                 | Operator/admin; read-only file validation              |
+| POST   | `/api/import`                         | Operator/admin; save the batch                         |
+| GET    | `/api/batches`                        | Paginated batch history                                |
+| GET    | `/api/batches/:id/errors.csv`         | Rejected source rows and reasons                       |
+| GET    | `/api/parcels.csv`                    | Filtered export; maximum 10,000 records                |
+| GET    | `/api/samples/parcels.json`           | Authenticated sample download                          |
+| GET    | `/api/samples/Container_68465468.xml` | Authenticated XML download                             |
 
-- `POST /api/import/preview?format=json&country=NL&partial=false&retain=false&filename=batch.json`: raw bytes; returns valid/invalid counts, department totals, complete row errors, policy version and token; never writes parcels.
-- `POST /api/import` accepts the same options. Send `X-Import-Preview` and `X-Policy-Version` from preview plus `Idempotency-Key`. Preview is mandatory for partial mode; legacy atomic API callers remain compatible. Changing file/options invalidates the token. Successful committed retries return the saved receipt, including after policy changes.
-- `GET /api/batches?page=1`: persisted filename/uploader/time/counts and error report.
-- `GET /api/batches/:id/errors.csv`: every rejected source row number and reason.
-- `GET /api/parcels.csv`: filtered CSV, maximum 10,000 rows; spreadsheet formula prefixes are escaped.
-- Parcel listing/export additionally accept `batch_id`, `department`, `country`, `from`, `to` (inclusive date), and `sort=oldest|newest`.
-- `GET /api/samples/parcels.json` and `/api/samples/Container_68465468.xml`: authenticated downloads.
-- `POST /api/policy/test`: admin `{policy,parcel}`, validates and returns the decision without inserting anything.
-- Policy preview returns `sample_limit`, `population`, `tests`, and impact over at most 5,000 newest inputs. Activation rejects failed tests regardless of the UI.
-- `POST /api/password`: `{current,password}`, revokes every session for the user.
-- `GET /api/users`, `POST /api/users` with `{username,role,password}`, and `POST /api/users/:name/disable`: administrator only; creation accepts operator or insurer roles only. Exactly one admin is enforced, and it cannot disable itself. Admin creation is the approval step; there is no public signup.
-- `GET /metrics` and `GET /api/monitor`: separate read-only `Authorization: Bearer <MONITOR_TOKEN>`. No session or CSRF needed for these reads. Token does not authorize any other endpoint.
+### Parcel payload
 
-Modern policies have `insurance_threshold`, `rules` and optional `tests`. Rules carry `id`, `priority`, `department`, and `when` conditions. Legacy `bands`/`country_overrides` remain accepted and are converted for display; the modern rule list is authoritative when present. Never edit stale compatibility fields expecting them to override `rules`.
+```json
+{
+  "reference": "ORDER-001",
+  "weight": "2.500",
+  "value": "1500.00",
+  "country": "NL",
+  "attributes": { "fragile": true }
+}
+```
 
-`GET /api/overview` department entries contain `{department, count, active}`. Active policy departments appear with zero counts when necessary. Historical departments absent from the policy have `active: false`; counts always describe stored routed decisions.
+- Required: weight, value and country. Optional: reference and attributes.
+- Weight: > 0, ≤ 100,000 kg, maximum 3 decimal places.
+- Value: 0–1,000,000,000 euros, maximum 2 decimal places.
+- Approval decision: `approve` or `reject`; pending parcels can be reviewed once.
+- Filters: `status`, `search`, `batch_id`, `department`, `country`, `from`, `to`.
+- Date bounds are inclusive UTC dates; sort accepts `oldest` or `newest`.
+
+### Import contract
+
+- Send raw JSON/XML bytes as `Content-Type: application/octet-stream`.
+- Query options: `format`, `country` fallback, `partial`, `retain`, `filename`.
+- Limits: 2 MiB and 5,000 rows.
+- Preview returns counts, row errors, proposed departments, policy version and token.
+- Commit headers: `X-Import-Preview`, `X-Policy-Version`, `Idempotency-Key`.
+- Partial mode requires a valid preview; the UI always previews both modes.
+- Legacy atomic API calls may omit preview; validation still applies.
+- Changing file/options/policy invalidates the preview.
+- Retry keys: 8–100 characters, scoped to the actor; reuse for the same uncertain operation.
+- Single intake returns 201 for creation and 200 for a successful replay.
+
+## Policies and audit
+
+| Method | Path                   | Purpose / body                                 |
+| ------ | ---------------------- | ---------------------------------------------- |
+| GET    | `/api/policy`          | Current policy and latest 20 history entries   |
+| POST   | `/api/policy/validate` | Admin; `{policy}`                              |
+| POST   | `/api/policy/test`     | Admin; `{policy, parcel}`; no insert           |
+| POST   | `/api/policy/preview`  | Admin; `{policy}`; latest 5,000 inputs at most |
+| POST   | `/api/policy`          | Admin; `{policy, token, base_version, reason}` |
+| GET    | `/api/audit`           | Admin; latest 100 events                       |
+
+- Modern policy fields: `insurance_threshold`, `rules`, `tests`.
+- Rules contain `id`, `priority`, `department`, `when`.
+- Unique IDs/priorities; exactly one final unconditional catch-all.
+- Weight/value: `lt`, `lte`, `gt`, `gte`; country: `in`; attributes: typed `eq`.
+- Legacy bands/overrides remain accepted; modern rules take precedence when supplied.
+- Activation needs a reason of at least ten characters and passing saved tests.
+- Stale preview/version is rejected; activation never rewrites existing parcels.
+
+## Health and monitoring
+
+| Path           | Access                                  | Meaning                   |
+| -------------- | --------------------------------------- | ------------------------- |
+| `/healthz`     | Public                                  | Process liveness          |
+| `/readyz`      | Public                                  | Database read readiness   |
+| `/metrics`     | `Authorization: Bearer <MONITOR_TOKEN>` | Prometheus metrics        |
+| `/api/monitor` | Same bearer token                       | Signals and recent alerts |
+
+## Error codes
+
+| Code      | Meaning                                             |
+| --------- | --------------------------------------------------- |
+| 400       | Malformed request                                   |
+| 401 / 403 | Missing session / insufficient role or CSRF failure |
+| 404       | Record not found                                    |
+| 409       | Conflict, stale preview or competing update         |
+| 413 / 415 | Payload too large / unsupported media type          |
+| 422       | Validation failure                                  |
+| 429       | Rate limit reached                                  |
+| 503       | Service unavailable                                 |
+
+- Use the response request ID to correlate failures with server logs.
+- See [Operations](OPERATIONS.md) for incident handling.

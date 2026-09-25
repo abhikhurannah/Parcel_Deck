@@ -1,25 +1,71 @@
-# Review improvements and acceptance map
+# Improvements and assignment coverage
 
-The supplied review was a static assessment, not an executed test report. This revision implements its five priority groups. See QA.md for checks actually executed.
+## Five improvement groups
 
-| Priority                     | Delivered behavior                                                                                                                                                                                                                                                   | Main files                                                                                              |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| 1. Rules and maintainability | Ordered AND-condition rules, attributes, unique priorities/IDs, final catch-all, independent insurance guard, legacy policy conversion on read; formatted modules, ESLint/Prettier gates                                                                             | server/domain.ts, routes/, middleware/, services/, repositories/, client/src/views/, client/src/policy/ |
-| 2. Batches and outcomes      | Schema migrations, persistent batch provenance, preview, opt-in partial import, all rejected row numbers/reasons, CSV export, batch filters, upload progress, drag/drop, sample downloads                                                                            | migrations.ts, routes/imports.ts, services/intake.ts, views/ImportForm.tsx, views/BatchesView.tsx       |
-| 3. Friendly policy editing   | Structured rule rows with comparison dropdowns, add/remove conditions, test-a-parcel, saved activation tests, current/proposed rule diff, impact preview and historical rollback                                                                                     | policy/RuleEditor.tsx, policy/PolicyTester.tsx, views/PolicyView.tsx                                    |
-| 4. Monitoring                | Protected Prometheus metrics, department-share baseline comparison, validation spikes, policy impact alerts, direct asynchronous 503 webhook, scoped monitor token and actor/role logs                                                                               | services/observability.ts, routes/operations.ts, scripts/monitor.ts                                     |
-| 5. Tests and security        | Backend regressions, fast-check with shrinking, golden fixture, React form tests, Playwright workflow, server coverage thresholds, trusted proxy configuration, username throttling, memory limiter, password change/user administration, security CI and Dependabot | tests/, eslint.config.mjs, .github/, routes/users.ts                                                    |
+| Group                     | Delivered                                                                                  | Main implementation                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| Rules and maintainability | Ordered conditions, attributes, final catch-all, legacy conversion, separated modules      | `server/domain.ts`, `server/routes/`, `client/src/policy/`    |
+| Batch outcomes            | Preview, partial mode, batch history, rejected-row reports, CSV and upload progress        | `server/routes/imports.ts`, `client/src/views/ImportForm.tsx` |
+| Policy editing            | Rule cards, scenario tester, saved tests, comparison, activation and rollback              | `client/src/views/PolicyView.tsx`                             |
+| Monitoring                | Scoped metrics token, anomaly signals, logs, monitor script and 503 webhook                | `server/services/observability.ts`, `scripts/monitor.ts`      |
+| Testing and security      | Regression/property/browser tests, coverage gates, account controls and security workflows | `tests/`, `.github/`, `server/routes/users.ts`                |
 
-Additional supporting changes: bounded preview of the latest 5,000 inputs using a read transaction; alert/event retention; Docker-only local setup; opt-in XML recipient name/city retention; department/country/date/batch filters and sorting. Existing records and policies remain intact during migration.
+## Assignment mapping
 
-Scope boundaries: no Stryker mutation score is claimed. Coverage, property tests and a fixed golden fixture are implemented; mutation testing remains an optional extension to evaluate separately. The visual editor handles general rules, which also express weight bands and country overrides, rather than maintaining two competing configuration models. Predicate operators are deliberately constrained; no uploaded expression is evaluated as code.
+| Requirement                | Evidence                                                           |
+| -------------------------- | ------------------------------------------------------------------ |
+| Correct parcel routing     | Exact decimals; boundary tests; default Mail/Regular/Heavy rules   |
+| Insurance before routing   | Pending state; insurer-only decision; concurrency checks           |
+| Adaptable business rules   | Versioned configuration, attributes and country rules              |
+| Safe evolution             | Saved activation tests, impact preview and rollback                |
+| Large input handling       | Bounded imports, row errors, pagination and explicit limits        |
+| Failure visibility         | Request IDs, audit events, metrics and anomaly signals             |
+| Internet-facing safeguards | Sessions, CSRF, role checks, input validation and security headers |
+| Feature branch exercise    | `npm run feature:demo`                                             |
+| AI disclosure              | [AI usage record](AI_USAGE.md)                                     |
 
-Cosmetic suggestions such as a Dutch translation and dark theme, and secondary workflows such as bulk insurance review and a detail drawer, are not part of this five-priority delivery. The existing individual review remains transactional and auditable.
+## Usability fixes
 
-## Final usability and submission updates
+- Blue operator, teal insurer and violet admin themes.
+- Policy cards with priority controls, scenario tests and publication readiness.
+- Active department counts appear immediately after a rename.
+- Retired department counts remain dimmed to preserve history.
+- Exactly one admin; multiple admin-created staff accounts.
+- Existing staff accounts and changed passwords persist.
 
-- Automatic blue/teal/violet role themes, a reviewer queue shortcut, and a responsive policy studio with rule cards, version/rule/test summaries and expandable comparisons.
-- Valid priority-zero defaults when adding rules, plus explicit activation readiness and validation messages.
-- Active department zero counts and dimmed retired departments, preserving historical decisions after renames.
-- Exactly one admin, admin-created operator/insurer credentials, and persistent account disabling/password changes.
-- GitHub-verified application, container and secret checks; documented owner-only CodeQL prerequisite. See QA.md for the dated record.
+## Example: extend routing safely
+
+```mermaid
+flowchart LR
+    A[Add Bulky rule] --> B[Test boundaries]
+    B --> C[Keep expected results]
+    C --> D[Preview impact]
+    D --> E[Activate with reason]
+    E --> F[Inspect new intake and audit]
+```
+
+- Insert `weight lte 30` after Regular and before Heavy.
+- Test 10, 10.001, 30 and 30.001 kg.
+- Keep the Heavy catch-all last.
+- High-value parcels still require insurance.
+- Existing parcels retain their original departments and policy versions.
+
+## Verification scope
+
+- Backend tests cover boundaries, imports, retries, permissions and policy safety.
+- Property tests and a fixed golden fixture complement example-based tests.
+- React tests cover forms; Playwright exercises the browser workflow.
+- Coverage gates apply to server code, excluding startup.
+- See [Operations](OPERATIONS.md) for the dated CI record and CodeQL prerequisite.
+
+## Remaining improvements
+
+| Priority                      | Work                                                                        | Reason                             |
+| ----------------------------- | --------------------------------------------------------------------------- | ---------------------------------- |
+| Before public deployment      | TLS/DNS, external alerts, restore rehearsal and independent security review | Validate the real environment      |
+| Before multi-instance scaling | Shared rate limits, identity cache invalidation and database strategy       | Current design assumes one process |
+| Before carrier integration    | Transactional outbox and consumer deduplication                             | Reliable external delivery         |
+| Optional                      | Mutation testing, bulk insurance review, translations and dark theme        | Further assurance and usability    |
+
+- No mutation-testing score or production load guarantee is claimed.
+- Preview limit: latest 5,000 inputs; import limit: 2 MiB / 5,000 rows.

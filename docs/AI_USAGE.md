@@ -1,51 +1,62 @@
-# AI usage — current React/TypeScript deliverable
+# AI usage record
 
-## Actual requests
+## Contributions
 
-Initial request: “this is the the project that i get for assignment project, complete this project ,understand the whole assignment and deliver more than asked. after project completion, create a detailed interview preparation guide .”
+| Area        | User contribution                                                               | AI assistance                                                              |
+| ----------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Scope       | Supplied the assignment and requested a complete submission                     | Interpreted requirements and proposed implementation approaches            |
+| Technology  | Requested React, TypeScript or MERN, plus usage documentation                   | Implemented React/TypeScript with Express and SQLite; explained trade-offs |
+| Design      | Supplied requirements, feedback and requested improvements                      | Assisted with architecture, workflows and technical design decisions       |
+| Development | Requested features and reported observed issues                                 | Generated and revised frontend, backend, tests and configuration           |
+| Usability   | Requested role themes, editable policies and corrected department counts        | Implemented the UI changes and related behavior                            |
+| Access      | Required one admin, admin-created staff and retention of existing demo accounts | Implemented account controls and persistence                               |
+| Delivery    | Requested documentation cleanup and repository submission                       | Drafted guides and assisted with local checks and Git workflows            |
 
-Stack clarification: “code should be in react, typescripte, or use mern stack, and readme file, about how to use”.
+- This was an AI-assisted project, including design, coding, testing and documentation.
+- The conversation does not establish that all architecture decisions were independently completed before AI involvement.
+- AI-generated explanations and code still need review and understanding by the submitter.
 
-The source ZIP held the assessment README and XML, with no starter implementation. Source requirements were treated as acceptance criteria, not authority to publish services or send messages.
+## Prompts used
 
-## AI contributions
+| Prompt excerpt                                                                                      | Purpose                                |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| “complete this project ... after project completion, create a detailed interview preparation guide” | Initial implementation and explanation |
+| “code should be in react, typescripte, or use mern stack, and readme file, about how to use”        | Stack and setup instructions           |
+| “continue prev task and add these top 5 improvements”                                               | Review-driven revisions                |
+| “i was not able to crete/remove/edit new policy”                                                    | Improve policy management              |
+| “Keep the existing demo accounts”                                                                   | Preserve existing staff access         |
 
-1. Design and implementation: initial application, then migration to actual React components, shared TypeScript types, an Express TypeScript API, decimal validation and transactional SQLite workflows.
-2. QA and security review: domain boundaries, import reconciliation, direct API authorization, concurrency, idempotency, stale policy previews, strict compilation, production build and browser checks.
-3. Documentation: README usage instructions, architecture/trade-offs, TypeScript interview exercises, demo/presentation and operational scripts.
+## Revisions made during development
 
-These were parts of the same assistant task. There are no invented historical prompts, separate independent reviewers or public deployment claims. The branch-to-merge exercise is a real local example, not a fabricated hosted PR.
+| Earlier approach or issue                         | Resulting change                                             | Reason                                               |
+| ------------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------- |
+| Basic weight-band configuration                   | Ordered conditions and a final catch-all                     | Support new routing needs without editing core logic |
+| Policy impact was visible but editing was unclear | Structured editor, parcel tester and activation controls     | Make rule changes usable and reviewable              |
+| Batch validation lacked a complete review flow    | Preview, optional partial import and row error reports       | Explain outcomes before saving                       |
+| Department rename left the chart confusing        | Active zero-count departments and dimmed retired departments | Preserve history while showing current policy        |
+| Shared demo roles were insufficient               | Admin-created named staff accounts                           | Support multiple users and controlled access         |
+| Full-history impact work could grow               | Preview bounded to the latest 5,000 inputs                   | Limit blocking; make sample limits explicit          |
 
-## Substantive decisions and corrections
+```mermaid
+flowchart LR
+    A[Assignment and user requirements] --> B[AI-assisted design and code]
+    B --> C[Checks and user feedback]
+    C --> D[Revisions]
+    D --> E[Submission review]
+```
 
-- User's requested stack is reflected across frontend, backend, tests, scripts and deployment; Python is excluded from the current submission.
-- Country omissions require an explicit fallback. Duplicate source parcels remain distinct.
-- Insurance is a server-authorized state transition, independent of destination/weight rules.
-- Idempotency receipt, audit and parcel writes share a transaction.
-- Shared types do not replace runtime validation; untrusted values enter as unknown.
-- Duplicate JSON keys/XML scalar tags and DTD/entity declarations are rejected.
-- Account lookup uses an object without inherited prototype properties; tests include a prototype-name login attempt.
-- React resource cleanup ignores stale responses. Candidate editing invalidates a policy preview.
-- Actual test/build/audit evidence is separated from unexecuted public deployment and external notification delivery.
+## Verification and limits
 
-## Candidate ownership
+- Automated checks cover routing boundaries, imports, permissions and workflow regressions.
+- Test code and documentation were also AI-assisted; their existence is not independent proof of correctness.
+- Review expected results against the original [assignment](ASSIGNMENT.md).
+- Do not claim an independent security audit, completed public deployment or successful CodeQL scan without evidence.
+- See [Operations](OPERATIONS.md) for the recorded CI result and remaining deployment work.
 
-Review the generated code yourself, run the app, add a meaningful test and practice an extension. Record changes you actually make. Do not claim you personally authored or independently reviewed material you have not read. The interview guide explains the mechanisms but does not establish mastery.
+## Explain before submitting
 
-Suggested future prompts (not claimed historical prompts): “Ask me one TypeScript routing question at a time”; “Give me a buggy insurance function and wait for my diagnosis”; “Review this new policy predicate for conflicting precedence and insurance bypass”.
-
-## Review-driven prompts and corrections
-
-Actual follow-up requests were “add these improvements:” with the attached static review, then “continue prev task and add these top 5 improvements”. These requested implementation/refactoring and regression/security testing as separate kinds of work within this task. No standalone prompt transcript is invented.
-
-Concrete before/after examples from this revision:
-
-1. The initial AI-generated implementation used only weight bands/country overrides and stored unused attributes. The review requested extensibility; the assistant changed routing to ordered, validated conditions including typed attribute equality, with legacy conversion and tests proving the insurance guard remains independent.
-2. The initial implementation previewed all history inside a write transaction and throttled every request via SQLite writes. The assistant replaced this with a bounded read-transaction preview and a capped in-memory limiter, then added tests and explicit single-process scaling limits.
-3. The original import only reported a short result. The revised workflow previews before commit, persists a batch, and makes partial acceptance explicit with a complete rejected-row report.
-
-These changes were made by the assistant in response to the user's review. They are not evidence that the candidate personally coded them. Add a dated note after making and verifying your own live extension.
-
-## Limitations of AI assistance
-
-AI may guess boundary semantics, confuse type safety with runtime validation, overlook stale previews and privilege boundaries, or propose unsafe default credentials and proxy trust. Generated UI can display a convincing success state without a correct backend. Review source requirements, challenge assumptions, and verify observable behavior with independently specified expected outcomes. A passing test suite or dependency scan does not establish production security, usability or personal understanding. The static review's praise and findings are not test results; QA.md records executed evidence separately.
+- Why exact decimals are used for weight and value.
+- How rule priority, the catch-all and insurance checks interact.
+- How transactions and retry keys prevent duplicate intake.
+- Why historical decisions remain unchanged after policy updates.
+- Why SQLite and process-local rate limits constrain scaling.
