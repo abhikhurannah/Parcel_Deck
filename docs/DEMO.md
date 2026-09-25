@@ -19,3 +19,7 @@ Use `examples/invalid-parcels.json` to show all-or-nothing validation. Do not si
 Live extension: add a generic `weight lte 30` rule and order the rules Mail, Regular, Bulky, Heavy with unique ascending priorities. Alternatively add `attributes.fragile eq true` at priority 0 for Special. Use Test a parcel, save expected cases, review the rule diff, preview and activate. Test10,10.001,30,30.001. High value always remains an insurance hold. Existing records retain their original policy. Rollback increases the version rather than deleting history.
 
 Fallback: the editable presentation contains speaker notes. The app itself loads no third-party assets; installation/auditing require network, while an installed local environment works offline. If a session expires, sign in again and repeat any policy preview because it is session-bound.
+
+## Final UI and security talking points
+
+Show the blue operator workspace, teal insurer review card and violet admin policy studio. After changing Mail to Whale, explain the zero-count active department and dimmed historical Mail count. Briefly show that staff creation offers only operator/insurer roles. End with the dated QA record: application, container and secret checks passed; CodeQL needs private-repository Code Security enablement. Avoid claiming a public deployment or all security checks passing.

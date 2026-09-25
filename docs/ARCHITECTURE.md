@@ -28,8 +28,14 @@ Bounded preview reduces blocking, but SQLite access and rule evaluation still ru
 
 ## Operations and limitations
 
-Memory counters provide bounded per-IP and per-username throttling for one process. SQLite stores users and revoked sessions. Environment hashes seed missing users only. Account changes update the local process cache; running multiple Node instances requires a shared identity/cache invalidation and rate-limit design.
+Memory counters provide bounded per-IP and per-username throttling for one process. SQLite stores users and revoked sessions. Startup configuration bootstraps the sole administrator only. The admin creates named operators and insurers, supplying their initial passwords; no public registration route exists. Schema version 3 enforces one administrator with a unique index. Existing staff accounts and password changes persist. Account changes update the local process cache; running multiple Node instances requires a shared identity/cache invalidation and rate-limit design.
 
 Prometheus metrics and read-only monitoring require a separate bearer token. Anomaly detection compares department shares with a prior seven-day window and uses explicit volume thresholds. Direct 503 notifications are asynchronous, rate-limited and backed by logs; the independent monitor detects outages. Alert/event retention excludes audit history. Optional recipient name/city retention is off by default.
 
 SQLite is chosen for an easy local assignment setup, so this is not labelled MERN. MongoDB would require replica-set transactions or a redesigned aggregate to preserve atomic audit/retry behavior. Real carrier delivery additionally needs an outbox and consumer deduplication.
+
+## Themes and department history
+
+Role-scoped CSS variables provide blue operator, teal insurer and violet admin themes. They change presentation, not permissions; Express still authorizes every protected mutation. The policy studio separates editable rules, scenario tests, expandable before/after comparisons, activation readiness and version history.
+
+The overview combines departments from the active policy with counts of stored routed parcels. Active departments appear even at zero. Historical departments no longer present in the policy remain visible with `active: false` and a retired label. Renaming Mail to Whale changes future routing only. Past Mail parcels, including their original policy version, are preserved. Pending insurance holds enter the distribution only after approval.

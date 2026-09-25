@@ -97,7 +97,7 @@ JavaScript numbers are binary floating point. Values such as 0.1 are not represe
 
 ### Why constrained policy JSON instead of an expression language?
 
-Ascending upper bounds and country overrides are easy to validate for coverage and conflicts. Arbitrary code or expressions make precedence and safety harder to reason about. A new predicate type should have a reviewed schema and evaluator, not `eval`.
+Ordered rules use constrained weight/value comparisons, country membership and typed attribute equality. Unique priorities and one final catch-all make precedence and coverage explicit. Arbitrary code or expressions make precedence and safety harder to reason about. A new predicate type should have a reviewed schema and evaluator, not `eval`.
 
 ### How does insurance stay independent?
 
@@ -338,3 +338,17 @@ Final checklist: start with `npm ci && npm run dev`; know all three demo roles; 
 **Does coverage prove regression protection?** No. Coverage identifies unexecuted code; golden examples specify independent expected answers, properties explore/shrink cases, and browser tests cover integration. Mutation testing could measure whether intentional mistakes are caught, but no Stryker score is claimed.
 
 **What changed in security?** Bounded memory throttling and per-username login limits, explicit trusted proxies, persistent users and session revocation, actor logs, and security CI. Discuss single-process cache/limiter limitations and the risk of trusting a proxy subnet when direct API access is possible.
+
+## Final implementation questions
+
+**Why does Mail remain after I rename it Whale?** The chart describes stored routed decisions, not a retrospective simulation. The active policy adds Whale immediately at zero; Mail is marked retired and retains its historical count. New qualifying parcels increase Whale. Rewriting history would erase which policy actually handled a parcel.
+
+**How are staff accounts approved?** The single administrator creates each operator or insurer with a unique username and initial password. Creation is the approval step; there is no public signup or separate pending-approval queue. A database constraint blocks additional admins. Disabled staff lose sessions immediately. Existing demo staff accounts were retained by request, while fresh installs bootstrap only admin.
+
+**Do different themes enforce roles?** No. Blue, teal and violet identify the current workspace visually. Server-side authorization enforces operator/insurer/admin privileges regardless of what a client displays or sends.
+
+**What changed in the policy editor?** New rules receive priority zero and existing priorities shift up. Rules are shown as cards with condition and fallback labels. Scenario testing, saved expected cases, impact preview, the change reason and activation are separate steps. JSON comparisons expand on demand. Historical decisions are not rerouted by activation.
+
+**Why did tests pass while security checks failed?** They inspect different concerns. CodeQL first lacked actions:read, then encountered the private repository's missing Code Security entitlement. The Gitleaks Action required an organization license; the open-source scanner found five manifest hashes that were independently verified as false positives. Trivy found vulnerable packages inside the image's unused npm installation. Removing runtime package managers resolved those findings without weakening scan thresholds.
+
+**What can I honestly claim?** 101 backend tests and four UI tests passed, alongside the browser workflow and build. Recorded backend coverage is 95.01% lines, 85.30% branches and 94.08% functions. GitHub application verification, secret scanning and container scanning passed on 55fa457. CodeQL remains blocked by repository configuration. See QA.md for dated evidence and remaining deployment limits.

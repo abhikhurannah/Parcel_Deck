@@ -6,6 +6,7 @@ A complete parcel-routing assignment built with **React, TypeScript, Node.js and
 
 Use **Node.js 24**, run `npm ci` and `npm run dev`, then open http://127.0.0.1:5173. Sign in as `admin` with initial local-demo password `Demo-admin-2026!`. In **Account & access**, create your operator and insurer accounts before trying their workflows.
 
+- [Documentation index](docs/README.md)
 - [Original assignment](docs/ASSIGNMENT.md)
 - [Step-by-step feature walkthrough](docs/FEATURE_WALKTHROUGH.md)
 - [Architecture and trade-offs](docs/ARCHITECTURE.md)
@@ -137,12 +138,12 @@ Approval releases the parcel to its proposed department. Rejection keeps it out 
 
 1. Sign in as `admin` and open **Routing policy**.
 2. Edit the structured rule rows. Lower priorities run first, and all conditions in a rule must match. A final rule with no conditions catches every remaining parcel.
-3. To route fragile parcels to Special, click **Add rule**, choose priority `0` (before the default priorities 100–102), and keep `attributes.fragile eq true` with department `Special`.
+3. To route fragile parcels to Special, click **Add rule**, keep the new priority `0` (existing priorities shift up automatically), and keep `attributes.fragile eq true` with department `Special`.
 4. Use **Test a parcel** with weight 12, value 1200, country IN, and Fragile checked. Expect Special and pending insurance.
 5. Click **Keep as activation test** to require that result before future activation. Review the expected result yourself; saving the current result is a convenience, not independent evidence.
 6. Review **Current versus proposed**, enter a reason of at least ten characters, click **1. Preview impact**, then **2. Activate policy**. Any failing saved case blocks activation on the server too.
 
-To add Bulky, add `weight lte 30` at priority 102 and move Heavy's catch-all priority to 103. To add a destination override, add `country in IN` at a priority before the weight rules. All operators are dropdowns and values are editable. Advanced JSON remains available; click **Load JSON into editor** before previewing pasted JSON.
+To add Bulky, add `weight lte 30` and assign unique ascending priorities in the order Mail, Regular, Bulky, Heavy. Keep any overrides before these weight rules and the Heavy catch-all last. To add a destination override, add `country in IN` at a priority before the weight rules. All operators are dropdowns and values are editable. Advanced JSON remains available; click **Load JSON into editor** before previewing pasted JSON.
 
 Preview compares the latest **5,000** stored inputs at most and shows the sample and population sizes. It is not a full-history guarantee. Existing decisions stay unchanged; rollback loads an older version and activates it as a new one. Older band/override policies convert automatically when loaded.
 
@@ -221,7 +222,7 @@ React owns rendered UI state; user content is escaped by React. The API makes ev
 
 ## 6. Data and configuration
 
-Demo data are stored in `data/demo-ts.sqlite3` and survive restarts. Production defaults to `data/routing-ts.sqlite3`. The previous Python demo database is not overwritten.
+Demo data are stored in `data/demo-ts.sqlite3` and survive restarts. Production defaults to `data/routing-ts.sqlite3`. A fresh database creates only the admin; existing staff accounts and changed passwords persist.
 
 The optional `.env` file is loaded by the dev/start commands. Copy `.env.example` only if you want custom settings. Do not commit credentials.
 
@@ -254,7 +255,7 @@ Run `npm start` behind an HTTPS reverse proxy. Production cookies are Secure; pl
 docker compose up --build -d
 ```
 
-Production has no default/demo credentials. `ROUTING_USERS` seeds missing named users on startup; account changes persist in SQLite. Provision only the first administrator externally and use Account & access thereafter. The app is intended for one Node process; its memory rate limits and account cache are not a distributed identity system. Deployment assets are supplied, but public hosting, real DNS/TLS, external notifications and a deployment-specific security review are not claimed completed. See [Operations](docs/OPERATIONS.md).
+Production has no default/demo credentials. `ROUTING_USERS` bootstraps exactly one administrator on startup; account changes persist in SQLite. Provision only the first administrator externally and use Account & access thereafter. The app is intended for one Node process; its memory rate limits and account cache are not a distributed identity system. Deployment assets are supplied, but public hosting, real DNS/TLS, external notifications and a deployment-specific security review are not claimed completed. See [Operations](docs/OPERATIONS.md).
 
 ## 8. Troubleshooting
 
@@ -308,3 +309,9 @@ The dashboard always lists departments in the active policy, even with zero rout
 The interface automatically follows the signed-in role: blue for operators, teal for insurers, and violet for the administrator. Insurance reviewers have a direct queue shortcut on their dashboard. Status badges keep consistent meanings across themes.
 
 Routing policy has a version/rule/test summary, separate rule cards with priority and fallback labels, a parcel-testing panel, and a publishing panel. Expand a changed rule under Current versus proposed to inspect its before/after JSON. Preview, change reasons and activation checks work as before. The layout stacks on mobile and supports keyboard focus and reduced-motion preferences.
+
+## Submission verification
+
+The application verification, container vulnerability scan and full-history secret scan passed on GitHub for security-fix commit `55fa457`. CodeQL is blocked because GitHub Code Security is not enabled for the private repository; it is not a code-scan pass. See [the verification record](docs/QA.md) and [security setup](docs/OPERATIONS.md#github-security-checks). Status is a recorded result, not a guarantee about later dependency updates or commits.
+
+Preview the role themes: [operator](docs/screenshots/theme-operator.png), [insurer](docs/screenshots/theme-insurer.png), [admin](docs/screenshots/theme-admin.png), and [policy studio](docs/screenshots/policy-editor.png).

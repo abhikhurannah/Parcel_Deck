@@ -19,7 +19,7 @@ Business endpoints require a session except login and the separately token-prote
 | GET    | `/healthz`                            | Public process liveness                                                                     |
 | GET    | `/readyz`                             | Public database read readiness                                                              |
 
-The TypeScript upload API accepts raw bytes rather than the earlier Python version's multipart form. The React client already uses the new contract. `country` applies only as a fallback for XML parcels missing Country; JSON requires each parcel's country.
+The upload API accepts raw JSON/XML bytes, not multipart form data. The React client sends this format. `country` applies only as a fallback for XML parcels missing Country; JSON requires each parcel's country.
 
 Parcel fields: required `weight`, `value`, `country`; optional `reference`, `attributes`. Runtime validators reject unknown fields, including supplied approval flags. Shared compile-time definitions are in `shared/types.ts`.
 

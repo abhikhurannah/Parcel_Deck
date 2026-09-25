@@ -15,3 +15,11 @@ Additional supporting changes: bounded preview of the latest 5,000 inputs using 
 Scope boundaries: no Stryker mutation score is claimed. Coverage, property tests and a fixed golden fixture are implemented; mutation testing remains an optional extension to evaluate separately. The visual editor handles general rules, which also express weight bands and country overrides, rather than maintaining two competing configuration models. Predicate operators are deliberately constrained; no uploaded expression is evaluated as code.
 
 Cosmetic suggestions such as a Dutch translation and dark theme, and secondary workflows such as bulk insurance review and a detail drawer, are not part of this five-priority delivery. The existing individual review remains transactional and auditable.
+
+## Final usability and submission updates
+
+- Automatic blue/teal/violet role themes, a reviewer queue shortcut, and a responsive policy studio with rule cards, version/rule/test summaries and expandable comparisons.
+- Valid priority-zero defaults when adding rules, plus explicit activation readiness and validation messages.
+- Active department zero counts and dimmed retired departments, preserving historical decisions after renames.
+- Exactly one admin, admin-created operator/insurer credentials, and persistent account disabling/password changes.
+- GitHub-verified application, container and secret checks; documented owner-only CodeQL prerequisite. See QA.md for the dated record.

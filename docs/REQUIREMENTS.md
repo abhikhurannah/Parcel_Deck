@@ -17,3 +17,12 @@
 SQLite is intentionally retained; this is React + TypeScript, not MERN. MongoDB, real insurance underwriting and carrier dispatch are not implemented or claimed. Public deployment and external alert delivery remain environment-specific setup. The original source assignment is preserved in `ASSIGNMENT.md`.
 
 Review edition details: [five-priority acceptance map](IMPROVEMENTS.md).
+
+## Final acceptance examples
+
+- Rename Mail to Whale, preview and activate: Whale appears immediately at zero; Mail is retired without losing historical counts. A new low-value parcel of 0.5 kg routes to Whale.
+- Admin creates two operators and two insurers with unique credentials. They can sign in; a staff user cannot create another account, and creating a second admin is rejected.
+- Add, activate, reload, edit and remove a fragile rule through the policy studio. New parcels follow the active version; existing parcels keep their original version.
+- Compare blue operator, teal insurer and violet admin views. Mobile policy editing stays within a 390px viewport.
+
+Security verification is partial until the repository owner enables GitHub Code Security. Container and secret scans passed; do not describe CodeQL as passing. See QA.md.
