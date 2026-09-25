@@ -3,7 +3,7 @@
   ".env.example": "6dc6a74121ea573b6b0062e272ccd9452aef58c3689263fec82a93c3fc2c163a",
   ".github/dependabot.yml": "ff41556274c1a7f36bf0d4eefc62519d8a6a402f887f1c9a6923b75bcbefad2f",
   ".github/workflows/ci.yml": "06e8ffb310d8c47b098a5a05e1b7965e8d681994db7e93fdcf7b9d4154f29082",
-  ".github/workflows/security.yml": "e073214abcb445c08e5867bbbe3a9e4d4bc8e9afa153b906da1612e5e26cad65",
+  ".github/workflows/security.yml": "1c1af0382099ec75799528bb7f9ef72d278543a71371767efff1df45a7e6b189",
   ".gitignore": "1184352c8a8ac2ed9feacb2e8d33d44f4a4f5dc285fdf30cd80818f77b50e65a",
   ".nvmrc": "68ca3fba3b7e864770cb61aeb306d4bd4354b68ab4dd38450860c5d823e42a53",
   ".prettierignore": "1718f6c7a6a9866e1a76285f9da2ab8212d572935595689340cd607b03f8ac34",
@@ -40,7 +40,7 @@
   "docs/FEATURE_WORKFLOW.md": "b1d233dbbe806faff94e260496d8ef0932a8cdc07b0fa89b7142a34c0a9575a5",
   "docs/IMPROVEMENTS.md": "fcdbfc0a5e01765e779a27304163926d3a7a7d6bea31e132fc7dff3ee2cd59f1",
   "docs/INTERVIEW_GUIDE.md": "1b1e4e9447a51796bbb2993c05b86d31c5b89248ee32cbac8cabc325b19d9776",
-  "docs/OPERATIONS.md": "eec768eae0b537089a1b1eac8128d404cde49c2f6842b7bcb47300589fea61be",
+  "docs/OPERATIONS.md": "b25ce1af6fc2383e98af654748f0de17dfef8670017349f30a2dc1862c736e48",
   "docs/ParcelDesk-Presentation.pptx": "f0ef91fb120f19f3c371294b65a1fdc2519dcb6048b9cce4c63414004fe3dce3",
   "docs/QA.md": "5740bdc9afa94415d78b334ebc8c00c0e76ae8d43b450a75448b55ce5b56452c",
   "docs/REQUIREMENTS.md": "90bda895da493aceeb7e76c07f93141efba339b5309810c88b414afc8836ebf9",
@@ -103,5 +103,6 @@
   "tsconfig.json": "b326b6281ebec1a407c548ac73737c5de7b8a852930d0ce2851cef926b6b6fef",
   "tsconfig.server.json": "5c1e83e5ce5270353dc16de518b80d72d4c49c981176801d550cbf77192b08e8",
   "vite.config.ts": "095f91e6d510dd28d2e26ed58d60a639fa7b7d056e17ea70d6b38cc90129e1a1",
-  "vitest.config.ts": "56a32ecb0adb1c2b644afeb7f3860764311a9b2007c76d8bb90df6e943c36878"
+  "vitest.config.ts": "56a32ecb0adb1c2b644afeb7f3860764311a9b2007c76d8bb90df6e943c36878",
+  ".gitleaksignore": "477bc25a782ae3352fb7ed760a14024f0235301fdee6349af3a35906ac0c7549"
 }

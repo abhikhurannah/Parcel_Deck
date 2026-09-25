@@ -30,7 +30,7 @@ jobs:
           docker run --rm --user "$(id -u):$(id -g)" \
             -v "$PWD:/repo:ro" \
             ghcr.io/gitleaks/gitleaks:v8.29.0@sha256:71d3ee5990f2176f763b438298453fc37e87b119122045e176ca9d44ff00b08b \
-            git /repo --redact --log-opts="--all"
+            git /repo --redact --log-opts="--all" --gitleaks-ignore-path=/repo/.gitleaksignore
 
   image:
     runs-on: ubuntu-latest

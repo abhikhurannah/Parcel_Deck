@@ -42,3 +42,11 @@ CI runs lint, formatting, build, backend coverage thresholds, React tests, Playw
 Production still needs real TLS/DNS, external alert testing, independent security review, MFA/SSO where appropriate, patching, protected central logging and measured load/disaster-recovery objectives. Synchronous bounded SQLite work can still block Node. For heavier traffic, use background workers and a shared transactional database.
 
 Schema version 3 enforces a single admin with a unique database index. An older database containing multiple admins must be reconciled before upgrading; the migration does not silently remove or demote accounts. Existing staff credentials persist. Fresh demo startup creates only the admin.
+
+## GitHub security checks
+
+CodeQL requires GitHub Code Security to be enabled for this private organization repository, in addition to the workflow's contents:read, actions:read and security-events:write permissions. The repository or organization owner must enable the feature and confirm subscription requirements. Until then, CodeQL remains visibly blocked; passing application tests is not a successful CodeQL scan.
+
+Secret scanning uses the pinned open-source Gitleaks container over full Git history, with redacted output. `.gitleaksignore` contains only five exact historical manifest-checksum false positives; each digest was verified against the corresponding committed file bytes. It does not exclude future manifest changes or credential findings.
+
+The production Docker stage removes unused npm/Yarn tooling, while the build stage retains npm. The container runs Node directly. Trivy still fails on fixed HIGH/CRITICAL findings; no vulnerability exclusions were added.
