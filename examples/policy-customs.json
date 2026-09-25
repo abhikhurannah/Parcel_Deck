@@ -1,0 +1,9 @@
+{
+  "insurance_threshold": "1000.00",
+  "bands": [
+    {"max_kg": "1", "department": "Mail"},
+    {"max_kg": "10", "department": "Regular"},
+    {"max_kg": null, "department": "Heavy"}
+  ],
+  "country_overrides": [{"country": "IN", "department": "Customs"}]
+}

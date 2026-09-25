@@ -1,0 +1,5 @@
+[
+  {"reference":"VALID-ROW","weight":"1","value":"10","country":"NL"},
+  {"reference":"INVALID-WEIGHT","weight":"-1","value":"10","country":"NL"},
+  {"reference":"UNKNOWN-COUNTRY","weight":"2","value":"10","country":"ZZ"}
+]

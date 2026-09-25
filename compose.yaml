@@ -1,0 +1,33 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      TRUST_PROXY: uniquelocal
+      MONITOR_TOKEN: ${MONITOR_TOKEN:-}
+      ALERT_WEBHOOK: ${ALERT_WEBHOOK:-}
+      ROUTING_USERS: ${ROUTING_USERS:?Provide user password hashes}
+      TRUSTED_HOSTS: ${DOMAIN:?Provide your domain},127.0.0.1,localhost
+    volumes:
+      - routing-data:/data
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    mem_limit: 512m
+    cpus: 1.0
+  proxy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on: [app]
+volumes:
+  routing-data:
+  caddy-data:
+  caddy-config:
