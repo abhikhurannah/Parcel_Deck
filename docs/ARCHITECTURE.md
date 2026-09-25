@@ -1,41 +1,113 @@
-# React / TypeScript architecture
+# Architecture
 
-ParcelDesk is a modular TypeScript application: React views call Express routes, services own transactional workflows, and small repositories hold account and parcel queries. SQLite provides local persistence. `shared/types.ts` provides compile-time contracts; `server/domain.ts` validates untrusted runtime input.
+## System map
 
-## Rule engine
+```mermaid
+flowchart TD
+    UI[React and TypeScript UI] --> API[Express routes]
+    API --> AUTH[Session, role and CSRF checks]
+    AUTH --> SERVICE[Intake and policy services]
+    SERVICE --> DOMAIN[Validation and routing engine]
+    SERVICE --> DB[(SQLite)]
+    API --> OBS[Logs, metrics and alerts]
+    MON[Independent monitor] --> API
+```
 
-A policy contains an insurance threshold, ordered rules and optional expected-output tests. Each rule has a unique ID and integer priority, an AND-list of conditions, and a department. Ascending priority wins; exactly one final rule has no conditions. Weight/value support lt/lte/gt/gte, country supports membership, and `attributes.<name>` supports typed equality. Dynamic property names are constrained and checked as own properties. No arbitrary expression runs as code.
+## Responsibilities
 
-Legacy bands/country overrides remain accepted at the API boundary. `policyRules` converts overrides before ascending weight bands; `modernPolicy` converts old versions for the editor without rewriting stored JSON or historical decisions. The registry declares supported field families, while validator/evaluator branches implement their semantics. Adding an entirely new field family requires both validation and matching support plus tests; adding another attribute rule requires configuration only.
+| Location               | Responsibility                                     |
+| ---------------------- | -------------------------------------------------- |
+| `client/src/views/`    | Dashboard, parcels, batches, policies and accounts |
+| `client/src/policy/`   | Rule editor and parcel tester                      |
+| `server/routes/`       | Request contracts and authorization                |
+| `server/domain.ts`     | Pure validation and routing decisions              |
+| `server/imports.ts`    | Bounded JSON/XML parsing                           |
+| `server/services/`     | Transactional intake, CSV and observability        |
+| `server/repositories/` | Account and parcel SQL                             |
+| `server/migrations.ts` | Versioned schema upgrades                          |
+| `shared/types.ts`      | Compile-time client/server contracts               |
 
-Routing chooses a proposed department, then independently applies insurance. The threshold cannot exceed €1000. Exact decimals are normalized to strings and stored as TEXT to avoid binary floating-point rounding. Only an insurer can release or reject a pending parcel. An administrator cannot bypass that role boundary.
+## Main design decisions
 
-## Batch and transaction boundary
+| Choice                         | Benefit                                    | Trade-off                                              |
+| ------------------------------ | ------------------------------------------ | ------------------------------------------------------ |
+| React + TypeScript             | Reusable views and typed contracts         | Runtime validation is still required                   |
+| Express modules                | Clear HTTP and business-logic boundaries   | One process handles requests and bounded database work |
+| SQLite                         | Simple setup and transactional persistence | Synchronous access; not a distributed database         |
+| Decimal strings + `decimal.js` | Exact boundary comparisons                 | Requires normalization at input boundaries             |
+| Ordered declarative rules      | New conditions through configuration       | New field families need validator/evaluator changes    |
+| Stored policy versions         | Reproduce past decisions                   | Policy changes do not reroute history                  |
+| Actor-scoped retry receipts    | Recover successful intake safely           | A new operation key creates a new operation            |
 
-`PRAGMA user_version` drives transactional schema migrations. Existing parcels receive a nullable batch ID; new file imports store batch filename, actor, totals, rejected row reasons and policy version. Atomic mode rejects all rows on any validation error. Explicit partial mode requires a preview and commits only valid rows. Rejected row numbers refer to the original source file.
+## Routing engine
 
-Preview signatures cover file bytes, file metadata/options and policy version. Commit validates those inputs. An actor-scoped idempotency key records the response with parcel/batch/audit writes in one `BEGIN IMMEDIATE` transaction. A replay checks the saved receipt before comparing the current policy, so a successful operation can be recovered even after a subsequent policy change. Intentionally new uploads use new keys. Same-content rows remain distinct parcels.
+- Evaluate rules in ascending priority; first matching rule wins.
+- Conditions within one rule use **AND**.
+- Require unique rule IDs/priorities and one final unconditional catch-all.
+- Support weight/value comparisons, country membership and typed attribute equality.
+- Select the proposed department, then independently check insurance.
+- Insurance threshold cannot exceed €1000; only an insurer can release a hold.
+- Accept legacy policies at the boundary and convert them for the editor.
+- Never execute uploaded expressions as code.
 
-## Policy safety
+## Intake and retry flow
 
-The impact preview uses a read transaction and compares the latest 5,000 inputs at most. Its HMAC binds normalized rules, active version and latest parcel ID. Activation checks the binding inside a write transaction, reruns saved expected-output cases, then appends a version. Changes affecting at least 25% of a sample of at least ten inputs create an operational alert. Past parcel decisions are immutable through these routes.
+```mermaid
+sequenceDiagram
+    participant UI as Operator UI
+    participant API as Express
+    participant DB as SQLite
+    UI->>API: Preview file and options
+    API-->>UI: Counts, errors and preview token
+    UI->>API: Confirm with token and operation key
+    API->>DB: Begin transaction; check retry receipt
+    alt Existing successful operation
+        DB-->>API: Saved response
+    else New operation
+        API->>DB: Save parcels, batch, audit and receipt
+        API->>DB: Commit together
+    end
+    API-->>UI: Batch result
+```
 
-Bounded preview reduces blocking, but SQLite access and rule evaluation still run synchronously on the event loop. Large-scale traffic requires workers/queued intake and a shared transactional datastore. A sample is not a statistical guarantee about older records.
+- Atomic mode: any invalid row prevents all inserts.
+- Partial mode: explicit opt-in plus preview; save valid rows and rejected-row reasons.
+- Preview binds file content, options and policy version.
+- Successful retries use the stored receipt even after a later policy change.
+- Duplicate source rows remain separate parcels; this is not content deduplication.
 
-## Frontend
+## Policy activation
 
-`App.tsx` owns login, navigation and dialogs. Operational views live in separate files. The policy view composes RuleEditor and PolicyTester. Typed API calls retain server authority; React escapes display data. Uploads use XMLHttpRequest for actual byte progress; previews clear whenever file/options change. `useResource` ignores stale responses on unmount or loader replacement. CSV output escapes spreadsheet formula prefixes.
+```mermaid
+flowchart LR
+    A[Edit draft] --> B[Test sample parcels]
+    B --> C[Preview impact]
+    C --> D{Valid preview and saved tests?}
+    D -->|Yes| E[Append policy version and audit]
+    D -->|No| F[Reject activation]
+```
 
-## Operations and limitations
+- Compare at most the latest 5,000 stored inputs in a read transaction.
+- Bind preview to normalized rules, active version and latest parcel ID.
+- Recheck preview and saved tests inside the activation transaction.
+- Require an activation reason of at least ten characters.
+- Rollback appends a new version; it does not delete old versions.
+- Example: Mail → Whale shows Whale at zero and Mail as retired; new parcels use Whale.
 
-Memory counters provide bounded per-IP and per-username throttling for one process. SQLite stores users and revoked sessions. Startup configuration bootstraps the sole administrator only. The admin creates named operators and insurers, supplying their initial passwords; no public registration route exists. Schema version 3 enforces one administrator with a unique index. Existing staff accounts and password changes persist. Account changes update the local process cache; running multiple Node instances requires a shared identity/cache invalidation and rate-limit design.
+## Identity and UI
 
-Prometheus metrics and read-only monitoring require a separate bearer token. Anomaly detection compares department shares with a prior seven-day window and uses explicit volume thresholds. Direct 503 notifications are asynchronous, rate-limited and backed by logs; the independent monitor detects outages. Alert/event retention excludes audit history. Optional recipient name/city retention is off by default.
+- One admin enforced by a database constraint.
+- Admin creates operator/insurer accounts and can disable staff.
+- Password changes and disabling revoke sessions.
+- React themes: operator blue, insurer teal, admin violet.
+- Colors do not grant access; server role checks do.
+- XML name/city retention is opt-in; street addresses are not retained.
 
-SQLite is chosen for an easy local assignment setup, so this is not labelled MERN. MongoDB would require replica-set transactions or a redesigned aggregate to preserve atomic audit/retry behavior. Real carrier delivery additionally needs an outbox and consumer deduplication.
+## Limits and extension points
 
-## Themes and department history
-
-Role-scoped CSS variables provide blue operator, teal insurer and violet admin themes. They change presentation, not permissions; Express still authorizes every protected mutation. The policy studio separates editable rules, scenario tests, expandable before/after comparisons, activation readiness and version history.
-
-The overview combines departments from the active policy with counts of stored routed parcels. Active departments appear even at zero. Historical departments no longer present in the policy remain visible with `active: false` and a retired label. Renaming Mail to Whale changes future routing only. Past Mail parcels, including their original policy version, are preserved. Pending insurance holds enter the distribution only after approval.
+- Single-process account cache and rate limits need redesign for multiple instances.
+- Add workers and a shared transactional store for larger workloads.
+- Real carrier delivery needs an outbox and consumer deduplication.
+- Impact previews are samples, not full-history guarantees.
+- New attribute rules need configuration; new predicate families need implementation and tests.
+- See [Operations](OPERATIONS.md) for monitoring and recovery.
